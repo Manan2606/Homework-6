@@ -2,6 +2,8 @@
 # conftest.py
 from decimal import Decimal
 from faker import Faker
+from calculator.operations import add, subtract, multiply, divide
+
 fake = Faker()
 
 def generate_test_data(num_records):
@@ -21,7 +23,7 @@ def generate_test_data(num_records):
         'multiply': multiply,
         'divide': divide
     }
-
+    # Generate test data
     for _ in range(num_records):
         a = Decimal(fake.random_number(digits=2))
         b = (
@@ -30,11 +32,15 @@ def generate_test_data(num_records):
         )
         operation_name = fake.random_element(elements=list(operation_mappings.keys()))
         operation_func = operation_mappings[operation_name]
+        # Ensure valid division
         # pylint: disable=comparison-with-callable
         if operation_func == divide:
             b = Decimal('1') if b == Decimal('0') else b
         try:
-            expected = operation_func(a, b)
+            if operation_func == divide and b == Decimal('0'):
+                expected = "ZeroDivisionError"
+            else:
+                expected = operation_func(a, b)
         except ZeroDivisionError:
             expected = "ZeroDivisionError"
         yield a, b, operation_name, operation_func, expected

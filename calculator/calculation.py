@@ -1,6 +1,6 @@
 """
 This module defines the Calculation class, which encapsulates a mathematical calculation
-with two operands (operand_a, operand_b) and a higher-order operation function.
+with two operands (a, b) and a higher-order operation function.
 The Decimal type is used for high-precision arithmetic.
 The Calculation class allows flexible operations by accepting the operation as a callable.
 """
