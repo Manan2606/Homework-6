@@ -10,8 +10,6 @@ def test_app_start_exit_command(capfd, monkeypatch):
         app.start()
     assert e.type == SystemExit
 
-
-
 import pytest
 
 def test_app_start_unknown_command(capfd, monkeypatch):
