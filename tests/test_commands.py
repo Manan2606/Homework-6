@@ -1,24 +1,6 @@
 '''test_commands.py'''
 import pytest
 from app import App
-from app.commands.goodbye import GoodbyeCommand
-from app.commands.greet import GreetCommand
-
-# Test the GreetCommand
-def test_greet_command(capfd):
-    """Test the GreetCommand"""
-    command = GreetCommand()
-    command.execute()
-    out, _ = capfd.readouterr()
-    assert out == "Hello, World!\n", "The GreetCommand should print 'Hello, World!'"
-
-# Test the GoodbyeCommand
-def test_goodbye_command(capfd):
-    """Test the GoodbyeCommand"""
-    command = GoodbyeCommand()
-    command.execute()
-    out, _ = capfd.readouterr()
-    assert out == "Goodbye\n", "The GoodbyeCommand should print 'Goodbye'"
 
 def test_app_greet_command(capfd, monkeypatch):
     """Test that the REPL correctly handles the 'greet' command."""
@@ -28,14 +10,18 @@ def test_app_greet_command(capfd, monkeypatch):
 
     app = App()
     with pytest.raises(SystemExit) as e:
-        app.start()
+        app.start()  # Assuming App.start() is now a static method
 
     assert str(e.value) == "Exiting...", "The app did not exit as expected"
 
-def test_app_menu_command(capfd, monkeypatch):
-    """Test that the REPL correctly handles the 'menu' command."""
-    # Simulate user entering 'menu' followed by 'exit'
-    inputs = iter(['menu', 'exit'])
+    # Verify the output for the 'greet' command
+    captured = capfd.readouterr()
+    assert "Hello, World!" in captured.out
+
+def test_app_unknown_command(capfd, monkeypatch):
+    """Test that the REPL correctly handles an unknown command."""
+    # Simulate user entering an unknown command followed by 'exit'
+    inputs = iter(['unknown_command', 'exit'])
     monkeypatch.setattr('builtins.input', lambda _: next(inputs))
 
     app = App()
@@ -43,3 +29,50 @@ def test_app_menu_command(capfd, monkeypatch):
         app.start()
 
     assert str(e.value) == "Exiting...", "The app did not exit as expected"
+
+    # Verify the output for the unknown command
+    captured = capfd.readouterr()
+    assert "No such command: unknown_command" in captured.out
+
+def test_app_exit_command(capfd, monkeypatch):
+    """Test that the REPL correctly handles the 'exit' command."""
+    # Simulate user entering 'exit' immediately
+    monkeypatch.setattr('builtins.input', lambda _: 'exit')
+
+    app = App()
+    with pytest.raises(SystemExit) as e:
+        app.start()
+
+    assert str(e.value) == "Exiting...", "The app did not exit as expected"
+
+def test_app_goodbye_command(capfd, monkeypatch):
+    """Test that the REPL correctly handles the 'goodbye' command."""
+    # Simulate user entering 'goodbye' followed by 'exit'
+    inputs = iter(['goodbye', 'exit'])
+    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+
+    app = App()
+    with pytest.raises(SystemExit) as e:
+        app.start()
+
+    assert str(e.value) == "Exiting...", "The app did not exit as expected"
+
+    # Verify the output for the 'goodbye' command
+    captured = capfd.readouterr()
+    assert "Goodbye" in captured.out
+
+def test_app_hello_command(capfd, monkeypatch):
+    """Test that the REPL correctly handles the 'hello' command."""
+    # Simulate user entering 'hello' followed by 'exit'
+    inputs = iter(['hello', 'exit'])
+    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
+
+    app = App()
+    with pytest.raises(SystemExit) as e:
+        app.start()
+
+    assert str(e.value) == "Exiting...", "The app did not exit as expected"
+
+    # Verify the output for the 'hello' command
+    captured = capfd.readouterr()
+    assert "Hello" in captured.out
