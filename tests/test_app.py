@@ -35,6 +35,7 @@ def test_app_start_unknown_command(monkeypatch, capfd, app):
     captured = capfd.readouterr()
     assert "No such command: unknown_command" in captured.out
 
+
 def test_app_register_commands(app):
     """Test registering command classes in the command handler."""
     app.command_handler.register_command('add', AddCommand)
