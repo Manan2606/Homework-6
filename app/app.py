@@ -1,26 +1,21 @@
-# app.py
-from commands import CommandHandler
-from commands.arithmetic import AddCommand, SubtractCommand, MultiplyCommand, DivideCommand
-from commands.greet import GreetCommand
-from commands.goodbye import GoodbyeCommand
+from app.commands import CommandHandler
+from app.plugins.add import AddCommand
+from app.plugins.subtract import SubtractCommand
+from app.plugins.multiply import MultiplyCommand
+from app.plugins.divide import DivideCommand
 
 class App:
     def __init__(self):
-        self.handler = CommandHandler()
-        self.register_commands()
+        self.command_handler = CommandHandler()
+        self.command_handler.register_command("add", AddCommand())
+        self.command_handler.register_command("subtract", SubtractCommand())
+        self.command_handler.register_command("multiply", MultiplyCommand())
+        self.command_handler.register_command("divide", DivideCommand())
 
-    def register_commands(self):
-        self.handler.register_command("greet", GreetCommand)
-        self.handler.register_command("goodbye", GoodbyeCommand)
-        self.handler.register_command("add", AddCommand)
-        self.handler.register_command("subtract", SubtractCommand)
-        self.handler.register_command("multiply", MultiplyCommand)
-        self.handler.register_command("divide", DivideCommand)
-
-    def start(self):
-        print("Welcome to the interactive calculator. Type 'exit' to quit.")
-        while True:
-            command = input("Enter a command: ").strip().lower()
-            if command == "exit":
-                raise SystemExit("Exiting...")
-            self.handler.execute_command(command)
+    def execute_with_args(self, command_name, *args):
+        """Wrapper to pass arguments to the command's execute method"""
+        command = self.command_handler.commands.get(command_name)
+        if command:
+            return command.execute(*args)
+        else:
+            return f"No such command: {command_name}"
